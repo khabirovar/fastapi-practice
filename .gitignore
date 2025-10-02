@@ -1,0 +1,32 @@
+# Byte-code files
+*.py[cod]
+__pycache__/
+*.so
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs and databases
+*.log
+*.sqlite3
+db.sqlite3
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env

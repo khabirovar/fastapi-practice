@@ -1,0 +1,6 @@
+# List all posts
+curl http://localhost:8000/posts
+
+# Add post
+curl -X POST http://localhost:8000/posts --data '{"title": "title", "content": "content"}' -H 'Content-Type: application/json'
+
