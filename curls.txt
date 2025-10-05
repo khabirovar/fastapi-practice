@@ -1,6 +1,14 @@
 # List all posts
-curl http://localhost:8000/posts
+curl -X GET -H 'Content-Type: application/json' http://localhost:8000/posts
+
+# Get post by id
+curl -X GET -H 'Content-Type: application/json' http://localhost:8000/posts/1 
 
 # Add post
-curl -X POST http://localhost:8000/posts --data '{"title": "title", "content": "content"}' -H 'Content-Type: application/json'
+curl -X POST -H 'Content-Type: application/json' http://localhost:8000/posts --data '{"title": "title", "content": "content"}'
 
+# Update post
+curl -X PUT -H 'Content-Type: application/json' http://localhost:8000/posts/1 --data '{"title": "new_title", "content": "content"}'
+
+# Delete post
+curl -X DELETE -H 'Content-Type: application/json' http://localhost:8000/posts/1
