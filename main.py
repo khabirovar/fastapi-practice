@@ -25,6 +25,12 @@ def root():
 def get_posts():
     return {"data": posts}
 
+@app.get('/posts/{id}')
+def get_post(id: int): # add ": int" for validation, id must be integer and will be converted in integer
+    post = list(filter(lambda x: x['id'] == id, posts))
+    print(post)
+    return {"data": post}
+
 @app.post('/posts')
 def createposts(post: Post):
     post_dict = post.model_dump()
