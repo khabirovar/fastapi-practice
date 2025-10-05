@@ -26,11 +26,9 @@ def get_posts():
     return {"data": posts}
 
 @app.get('/posts/{id}')
-def get_post(id: int, response: Response): # add ": int" for validation, id must be integer and will be converted in integer
+def get_post(id: int): # add ": int" for validation, id must be integer and will be converted in integer
     post = list(filter(lambda x: x['id'] == id, posts))
     if not post:
-        # response.status_code = status.HTTP_404_NOT_FOUND
-        # return {"message": f"{id} does not found"}
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
     print(post)
     return {"data": post}
