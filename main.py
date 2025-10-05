@@ -48,3 +48,15 @@ def delete_post(id: int):
     idx = posts.index(post[0])
     posts.pop(idx)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.put('/posts/{id}', status_code=status.HTTP_202_ACCEPTED)
+def update_post(id: int, new_post: Post):
+    post = list(filter(lambda x: x['id'] == id, posts))
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
+    post = post[0]
+    idx = posts.index(post)
+    new_post_dict = new_post.model_dump()
+    new_post_dict['id'] = id
+    posts[idx] = new_post_dict
+    return {"data": new_post_dict}
