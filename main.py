@@ -21,7 +21,7 @@ posts = [
 def root():
     return {'message': 'fastapi'}
 
-@app.get('/posts', status_code=status.HTTP_201_CREATED) # change default status in decorator
+@app.get('/posts')
 def get_posts():
     return {"data": posts}
 
@@ -33,7 +33,7 @@ def get_post(id: int): # add ": int" for validation, id must be integer and will
     print(post)
     return {"data": post}
 
-@app.post('/posts')
+@app.post('/posts', status_code=status.HTTP_201_CREATED) # change default status in decorator
 def createposts(post: Post):
     post_dict = post.model_dump()
     post_dict["id"] = randrange(0, 100000000000)
