@@ -27,7 +27,7 @@ while True:
         print("DB connection error: ", e)
         time.sleep(5)
 
-posts = [
+old_posts = [
     {"title": "post #1 title", "content": "post #1 content", "id": 1},
     {"title": "post #2 title", "content": "post #2 content", "id": 2}
     ]
@@ -38,6 +38,8 @@ def root():
 
 @app.get('/posts')
 def get_posts():
+    cursor.execute(""" SELECT * FROM posts """)
+    posts = cursor.fetchall()
     return {"data": posts}
 
 @app.get('/posts/{id}')
