@@ -53,7 +53,8 @@ def createposts(post: Post):
 
 @app.get('/posts/{id}')
 def get_post(id: int): # add ": int" for validation, id must be integer and will be converted in integer
-    post = list(filter(lambda x: x['id'] == id, posts))
+    cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id),))
+    post = cursor.fetchone()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
     print(post)
