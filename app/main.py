@@ -71,12 +71,12 @@ def delete_post(id: int):
 
 @app.put('/posts/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update_post(id: int, new_post: Post):
-    post = list(filter(lambda x: x['id'] == id, posts))
+    
+    cursor.execute(""" UPDATE posts SET title=%s, content=%s, published=%s WHERE id = %s RETURNING * """,
+                   (new_post.title, new_post.content, new_post.published, str(id)))
+    post = cursor.fetchone()
+    conn.commit()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
-    post = post[0]
-    idx = posts.index(post)
-    new_post_dict = new_post.model_dump()
-    new_post_dict['id'] = id
-    posts[idx] = new_post_dict
-    return {"data": new_post_dict}
+    
+    return {"data": post}
