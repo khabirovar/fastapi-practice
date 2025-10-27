@@ -62,11 +62,11 @@ def get_post(id: int): # add ": int" for validation, id must be integer and will
 
 @app.delete('/posts/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
-    post = list(filter(lambda x: x['id'] == id, posts))
+    cursor.execute(""" DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
+    post = cursor.fetchone()
+    conn.commit() 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
-    idx = posts.index(post[0])
-    posts.pop(idx)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.put('/posts/{id}', status_code=status.HTTP_202_ACCEPTED)
