@@ -62,9 +62,10 @@ def createposts(post: Post, db: Session = Depends(get_db)):
     return {'new_post': new_post}
 
 @app.get('/posts/{id}')
-def get_post(id: int): # add ": int" for validation, id must be integer and will be converted in integer
-    cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id),))
-    post = cursor.fetchone()
+def get_post(id: int, db: Session = Depends(get_db)): # add ": int" for validation, id must be integer and will be converted in integer
+    # cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id),))
+    # post = cursor.fetchone()
+    post = db.query(models.Post).filter(models.Post.id == id).first() # same as WHERE; first() like all() execute generated sql query
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
     print(post)
