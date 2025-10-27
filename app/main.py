@@ -49,12 +49,17 @@ def get_posts(db: Session = Depends(get_db)):
     return {"data": posts}
 
 @app.post('/posts', status_code=status.HTTP_201_CREATED) # change default status in decorator
-def createposts(post: Post):
-    cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
-                   (post.title, post.content, post.published))
-    post = cursor.fetchone()
-    conn.commit()
-    return {'new_post': post}
+def createposts(post: Post, db: Session = Depends(get_db)):
+    # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
+    #                (post.title, post.content, post.published))
+    # post = cursor.fetchone()
+    # conn.commit()
+    # new_post = models.Post(title=post.title, content=post.content, published=post.published)
+    new_post = models.Post(**post.model_dump()) # unpack dict from pydantic model returning
+    db.add(new_post)
+    db.commit()          # sam as conn.commit()
+    db.refresh(new_post) # same as RETURNING
+    return {'new_post': new_post}
 
 @app.get('/posts/{id}')
 def get_post(id: int): # add ": int" for validation, id must be integer and will be converted in integer
