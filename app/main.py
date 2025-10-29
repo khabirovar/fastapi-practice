@@ -72,12 +72,18 @@ def get_post(id: int, db: Session = Depends(get_db)): # add ": int" for validati
     return {"data": post}
 
 @app.delete('/posts/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
-    cursor.execute(""" DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
-    post = cursor.fetchone()
-    conn.commit() 
-    if not post:
+def delete_post(id: int, db: Session = Depends(get_db)):
+    # cursor.execute(""" DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
+    # post = cursor.fetchone()
+    # conn.commit() 
+    post = db.query(models.Post).filter(models.Post.id == id)
+
+    if not post.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
+    
+    post.delete()
+    db.commit()
+    
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.put('/posts/{id}', status_code=status.HTTP_202_ACCEPTED)
