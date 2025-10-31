@@ -1,13 +1,12 @@
 from random import randrange
-from typing import Optional
+from typing import Optional, List
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
-from pydantic import BaseModel
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from sqlalchemy.orm import Session
-from . import models
+from . import models, schemas
 from .database import engine, get_db
 
 
@@ -15,10 +14,6 @@ models.Base.metadata.create_all(engine)
 
 app = FastAPI()
 
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
 
 while True:
     try:
@@ -41,15 +36,15 @@ old_posts = [
 def root():
     return {'message': 'fastapi'}
 
-@app.get('/posts')
+@app.get('/posts', response_model=List[schemas.Post])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts """)
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
-    return {"data": posts}
+    return posts
 
-@app.post('/posts', status_code=status.HTTP_201_CREATED) # change default status in decorator
-def createposts(post: Post, db: Session = Depends(get_db)):
+@app.post('/posts', status_code=status.HTTP_201_CREATED, response_model=schemas.Post) # change default status in decorator
+def createposts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
     #                (post.title, post.content, post.published))
     # post = cursor.fetchone()
@@ -59,9 +54,9 @@ def createposts(post: Post, db: Session = Depends(get_db)):
     db.add(new_post)
     db.commit()          # sam as conn.commit()
     db.refresh(new_post) # same as RETURNING
-    return {'new_post': new_post}
+    return new_post
 
-@app.get('/posts/{id}')
+@app.get('/posts/{id}', response_model=schemas.Post)
 def get_post(id: int, db: Session = Depends(get_db)): # add ": int" for validation, id must be integer and will be converted in integer
     # cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id),))
     # post = cursor.fetchone()
@@ -69,7 +64,7 @@ def get_post(id: int, db: Session = Depends(get_db)): # add ": int" for validati
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not found")
     print(post)
-    return {"data": post}
+    return post
 
 @app.delete('/posts/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db)):
@@ -86,8 +81,8 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@app.put('/posts/{id}', status_code=status.HTTP_202_ACCEPTED)
-def update_post(id: int, new_post: Post, db: Session = Depends(get_db)):
+@app.put('/posts/{id}', status_code=status.HTTP_202_ACCEPTED, response_model=schemas.Post)
+def update_post(id: int, new_post: schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute(""" UPDATE posts SET title=%s, content=%s, published=%s WHERE id = %s RETURNING * """,
     #                (new_post.title, new_post.content, new_post.published, str(id)))
     # post = cursor.fetchone()
@@ -100,4 +95,4 @@ def update_post(id: int, new_post: Post, db: Session = Depends(get_db)):
     post.update(new_post.model_dump())
     db.commit()
 
-    return {"data": post.first()}
+    return post.first()
