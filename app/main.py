@@ -96,3 +96,11 @@ def update_post(id: int, new_post: schemas.PostCreate, db: Session = Depends(get
     db.commit()
 
     return post.first()
+
+@app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
