@@ -15,3 +15,6 @@ curl -X DELETE -H 'Content-Type: application/json' http://localhost:8000/posts/1
 
 # Create user
 curl -X POST -H 'Content-Type: application/json' http://localhost:8000/users --data '{"email": "newuser@gmail.com", "password": "password123"}'
+
+# Get user by id
+curl -X GET -H 'Content-Type: application/json' http://localhost:8000/users/1 
