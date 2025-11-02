@@ -14,7 +14,10 @@ curl -X PUT -H 'Content-Type: application/json' http://localhost:8000/posts/1 --
 curl -X DELETE -H 'Content-Type: application/json' http://localhost:8000/posts/1
 
 # Create user
-curl -X POST -H 'Content-Type: application/json' http://localhost:8000/users --data '{"email": "newuser@gmail.com", "password": "password123"}'
+curl -X POST -H 'Content-Type: application/json' http://localhost:8000/users --data '{"email": "user@gmail.com", "password": "password123"}'
 
 # Get user by id
 curl -X GET -H 'Content-Type: application/json' http://localhost:8000/users/1 
+
+# Login 
+curl -X POST -H 'Content-Type: application/json' http://localhost:8000/login --data '{"email": "user@gmail.com", "password": "password123"}'
