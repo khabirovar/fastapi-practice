@@ -20,4 +20,4 @@ curl -X POST -H 'Content-Type: application/json' http://localhost:8000/users --d
 curl -X GET -H 'Content-Type: application/json' http://localhost:8000/users/1 
 
 # Login 
-curl -X POST -H 'Content-Type: application/json' http://localhost:8000/login --data '{"email": "user@gmail.com", "password": "password123"}'
+curl -X POST -H 'Content-Type: application/x-www-form-urlencoded' http://localhost:8000/login -d "username=user@gmail.com&password=password123"
