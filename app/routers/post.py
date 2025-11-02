@@ -10,14 +10,14 @@ router = APIRouter(
     tags   = ["Posts"]
 )
 
-@router.get('/', response_model=List[schemas.Post])
+@router.get('', response_model=List[schemas.Post])
 def get_posts(db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts """)
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
     return posts
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.Post) # change default status in decorator
+@router.post('', status_code=status.HTTP_201_CREATED, response_model=schemas.Post) # change default status in decorator
 def createposts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
     #                (post.title, post.content, post.published))
